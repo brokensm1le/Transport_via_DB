@@ -1,11 +1,20 @@
 # Transport_via_DB
 
-## LocalServer
+## LocalServerDocker
+
+```
+docker build -t local-server .
+
+docker run -p 5000:5000 local-server -env ...
+```
+
+
+
+## LocalServer-test
 
 Пострелять Curl-ом:
 ```
-curl -XPOST http://localhost:8080/send -H 'accept: application/json' -H 'Content-Type: application/json' 
--d '{"chatID":"kek1", "message": "hello", "username": "vasya"}'
+curl -XPOST http://localhost:8080/send -H 'accept: application/json' -H 'Content-Type: application/json' -d '{"chatID":"kek1", "message": "hello", "username": "vasya"}'
 ```
 Через Python:
 ```
