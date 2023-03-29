@@ -17,7 +17,7 @@ def send() -> (http.HTTPStatus, requests.Response):
     if request.data:
         try:
             data = json.loads(request.data.decode(encoding='utf-8'))
-
+            print(data)
             key = RSA.import_key(open(path_pub_key).read())
             cipher = PKCS1_OAEP.new(key)
             data['message'] = cipher.encrypt(data['message'])
@@ -52,5 +52,5 @@ def get() -> (http.HTTPStatus, requests.Response):
 
 
 if __name__ == "__main__":
-    app.run(host='localhost', port='8080')
+    app.run(host='0.0.0.0', port='5000')
 
