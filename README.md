@@ -5,7 +5,7 @@
 ```
 docker build -t local-server .
 
-docker run -p 5000:5000 local-server -env ...
+docker run -p 5000:5000 local-server --env ...
 ```
 
 
