@@ -57,4 +57,4 @@ if __name__ == '__main__':
     salt, salt_signer = SaltSigner(salt=salt)
     print("Salt of signer setted to:", salt, flush=True)
 
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5050)
