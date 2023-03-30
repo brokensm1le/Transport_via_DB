@@ -14,8 +14,9 @@ address_server = os.environ.get('ADDR_SERVER')
 app = Flask(__name__)
 
 
-@app.route("/send", methods=['POST'])
+@app.post("/send")
 def send() -> (http.HTTPStatus, requests.Response):
+    print(request.data)
     if request.data:
         try:
             data = json.loads(request.data.decode(encoding='utf-8'))
@@ -33,7 +34,7 @@ def send() -> (http.HTTPStatus, requests.Response):
         return http.HTTPStatus.BAD_REQUEST, None
 
 
-@app.route("/get", methods=['GET'])
+@app.get("/get")
 def get() -> (http.HTTPStatus, requests.Response):
     if request.data:
         try:

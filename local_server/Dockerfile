@@ -10,7 +10,7 @@ COPY local_server .
 ADD utils utils
 
 # install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # run the command
 CMD ["python", "main.py"]
