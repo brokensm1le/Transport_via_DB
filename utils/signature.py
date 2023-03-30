@@ -14,7 +14,7 @@ class SaltSigner(object):
     def generate_signature(self, data):
         if self._salt is None:
             raise ValueError("No salt provided")
-        return hashlib.sha256(self._salt + json.dumps(data, sort_keys=True)).hexdigest()
+        return hashlib.sha256((self._salt + json.dumps(data, sort_keys=True)).encode('utf-8')).hexdigest()
 
     def __init__(self, salt=None, length=10):
         self.rand = random.Random(int(str(time.time()).replace('.', '')))
