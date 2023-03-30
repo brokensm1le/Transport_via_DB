@@ -1,10 +1,11 @@
-FROM python:3.8-slim-buster
+FROM python:3
 
 WORKDIR /app
 
-COPY requirements requirements 
+COPY server/app/requirements requirements 
 RUN pip3 install -r requirements
 
-COPY . .
+COPY server/app .
+ADD utils utils
 
-CMD [ "python3", "-m", "flask", "--app", "app", "run" ]
+CMD [ "python3", "app.py" ]

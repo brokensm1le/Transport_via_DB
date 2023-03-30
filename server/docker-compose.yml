@@ -8,8 +8,11 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
   app:
-    build: app/
-    command: python ./app.py
-    depends_on: mongo
+    build: 
+      context: ../
+      dockerfile: server/app/Dockerfile
+    command: python3 app.py
+    depends_on: 
+     - mongo
     ports:
      - 5000:5000

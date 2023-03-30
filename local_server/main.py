@@ -3,9 +3,10 @@ from flask import Flask, request
 import json
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
-from utlis.signature import generate_signature
+from utils.signature import SaltSigner
 
 salt = os.environ.get('SALT')
+salt, salt_signer = SaltSigner(salt=salt)
 path_pub_key = os.environ.get('PATH_PUB_KEY')
 path_prv_key = os.environ.get('PATH_PRV_KEY')
 address_server = os.environ.get('ADDR_SERVER')
@@ -22,12 +23,12 @@ def send() -> (http.HTTPStatus, requests.Response):
             key = RSA.import_key(open(path_pub_key).read())
             cipher = PKCS1_OAEP.new(key)
             data['message'] = cipher.encrypt(data['message'])
-            data["signature"] = generate_signature(data)
+            data["signature"] = salt_signer.generate_signature(data)
 
             response = requests.post(address_server, json=data)
         except:
             return http.HTTPStatus.BAD_REQUEST, None
-        return response.status_code, response.text
+        return response.status_code, response.json()
     else:
         return http.HTTPStatus.BAD_REQUEST, None
 
@@ -44,7 +45,7 @@ def get() -> (http.HTTPStatus, requests.Response):
             key = RSA.import_key(open(path_prv_key).read())
             cipher = PKCS1_OAEP.new(key)
             for i in range(len(data_response["messages"])):
-                data_response["messages"][i] = cipher.decrypt(data_response["messages"][i])
+                data_response["messages"][i]["message"] = cipher.decrypt(data_response["messages"][i]["message"])
         except:
             return http.HTTPStatus.BAD_REQUEST, None
         return response.status_code, data_response

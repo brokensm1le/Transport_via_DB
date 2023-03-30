@@ -4,12 +4,13 @@ FROM python:3
 WORKDIR /usr/src/app
 
 # copy all the files to the container
-COPY . .
+COPY local_server .
+
+# copy utils to the container
+ADD utils utils
 
 # install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-
-EXPOSE 5000
 
 # run the command
 CMD ["python", "main.py"]
