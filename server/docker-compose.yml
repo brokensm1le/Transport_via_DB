@@ -18,3 +18,4 @@ services:
      - 5050:5050
     env_file:
       - .env
+    container_name: server-app
