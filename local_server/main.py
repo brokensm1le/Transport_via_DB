@@ -8,6 +8,7 @@ from base64 import b64decode, b64encode
 
 salt = os.environ.get('SALT')
 salt_signer = SaltSigner(salt=salt)
+print(salt, flush=True)
 pub_key = RSA.import_key(b64decode(os.environ.get('PATH_PUB_KEY').encode('utf-8')))
 pub_cipher = PKCS1_OAEP.new(pub_key)
 prv_key = RSA.import_key(b64decode(os.environ.get('PATH_PRV_KEY').encode('utf-8')))
@@ -24,7 +25,9 @@ def send():
         try:
             data = json.loads(request.data.decode(encoding='utf-8'))
             data['message'] = b64encode(pub_cipher.encrypt(data['message'].encode('utf-8'))).decode('utf-8')
+            print(data, flush=True)
             data["signature"] = salt_signer.generate_signature(data)
+            print(data, flush=True)
             response = requests.post(address_server, json=data)
         except Exception as e:
             print(e)

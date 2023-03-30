@@ -6,7 +6,7 @@ up: # Up containers with the local server. Usage: "make up SALT=YOUR_SALT PATH_P
 	@rm -f .env
 	@touch .env
 	@if [ $(SALT) ]; then\
-		echo SALT=$(SALT)\n >> .env;\
+		echo SALT=$(SALT) >> .env;\
 	else\
 		echo No SALT variable.;\
 		exit 1;\
