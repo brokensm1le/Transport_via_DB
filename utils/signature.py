@@ -2,6 +2,7 @@ import hashlib
 import random
 import string
 import time
+import json
 
 class SaltSigner(object):
     _salt = None
@@ -15,9 +16,11 @@ class SaltSigner(object):
             raise ValueError("No salt provided")
         return hashlib.sha256(self._salt + json.dumps(data, sort_keys=True)).hexdigest()
 
-    def __new__(self, salt=None, length=10):
+    def __init__(self, salt=None, length=10):
         self.rand = random.Random(int(str(time.time()).replace('.', '')))
         if salt is None:
-            salt = self.generate_salt(self, length)
+            salt = self.generate_salt(length)
         self._salt = salt
-        return salt, self
+
+    def get_salt(self):
+        return self._salt

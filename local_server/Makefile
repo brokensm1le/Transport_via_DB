@@ -13,7 +13,9 @@ up: # Up containers with the local server. Usage: "make up SALT=YOUR_SALT PATH_P
 	fi
 	@if [ $(PATH_PUB_KEY) ]; then\
 		if test -f "$(PATH_PUB_KEY)"; then\
-			echo PATH_PUB_KEY=$(PATH_PUB_KEY) >> .env;\
+			echo -n PATH_PUB_KEY= >> .env;\
+			cat $(PATH_PUB_KEY) | base64 | awk '{ printf("%s", $$0) }' >> .env;\
+			echo >> .env;\
 		else\
 			echo \"$(PATH_PUB_KEY)\" is not a valid path to public key file.;\
 			exit 1;\
@@ -24,7 +26,9 @@ up: # Up containers with the local server. Usage: "make up SALT=YOUR_SALT PATH_P
 	fi
 	@if [ $(PATH_PRV_KEY) ]; then\
 		if test -f "$(PATH_PRV_KEY)"; then\
-			echo PATH_PRV_KEY=$(PATH_PRV_KEY) >> .env;\
+			echo -n PATH_PRV_KEY= >> .env;\
+			cat $(PATH_PRV_KEY) | base64 | awk '{ printf("%s", $$0) }' >> .env;\
+			echo >> .env;\
 		else\
 			echo \"$(PATH_PRV_KEY)\" is not a valid path to private key file.;\
 			exit 1;\
@@ -42,9 +46,11 @@ up: # Up containers with the local server. Usage: "make up SALT=YOUR_SALT PATH_P
 	@docker-compose up -d
 
 stop: # Stop containers with the local server. Usage: "make stop"
+	@touch .env
 	@docker-compose stop
 
 down: # Down containers with the local server. Usage: "make down"
+	@touch .env
 	@docker-compose down
 
 help: # Show help for each of the Makefile recipes. Usage: "make help"

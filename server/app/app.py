@@ -33,7 +33,7 @@ def add_message():
         result = mongo_add_message(data, chatID)
         return {'id': result}, http.HTTPStatus.OK        
     except:
-        return 'No data in request\n', http.HTTPStatus.BAD_REQUEST
+        return 'Bad data in request\n', http.HTTPStatus.BAD_REQUEST
 
 @app.get('/')
 def get_messages():
@@ -50,11 +50,11 @@ def get_messages():
         result = mongo_get_messages(lastRecieved, chatID)
         return result, http.HTTPStatus.OK
     except:
-        return 'No data in request\n', http.HTTPStatus.BAD_REQUEST
+        return 'Bad data in request\n', http.HTTPStatus.BAD_REQUEST
 
 if __name__ == '__main__':    
     salt = os.environ.get('SALT')
-    salt, salt_signer = SaltSigner(salt=salt)
-    print("Salt of signer setted to:", salt, flush=True)
+    salt_signer = SaltSigner(salt=salt)
+    print("Salt of signer setted to:", salt_signer.get_salt(), flush=True)
 
     app.run(host='0.0.0.0', port=5050)

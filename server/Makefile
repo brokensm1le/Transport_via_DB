@@ -11,9 +11,11 @@ up: # Up containers with the server. Usage: "make up [SALT=YOUR_SALT]"
 	@docker-compose up -d
 
 stop: # Stop containers with the server. Usage: "make stop"
+	@touch .env
 	@docker-compose stop
 
 down: # Down containers with the server. Usage: "make down"
+	@touch .env
 	@docker-compose down
 
 get_salt: # Get the salt setted to signer. Usage: "make get_salt"
