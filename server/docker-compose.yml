@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+  app:
+    build: app/
+    command: python ./app.py
+    depends_on: mongo
+    ports:
+     - 5000:5000
