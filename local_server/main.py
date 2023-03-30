@@ -1,4 +1,4 @@
-import http, requests, os, hashlib
+import http, requests, os
 from flask import Flask, request
 import json
 from Crypto.Cipher import PKCS1_OAEP

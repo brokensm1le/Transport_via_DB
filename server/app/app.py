@@ -24,7 +24,7 @@ def add_message():
         signature = data['signature']
         del data['signature']
 
-        true_signature = hashlib.sha256(salt + json.dumps(data, sort_keys=True)).hexdigest()
+        true_signature = salt_signer.generate_signature(data)
         if signature != true_signature:
             return 'Wrong signature\n', http.HTTPStatus.FORBIDDEN
         
