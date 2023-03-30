@@ -57,6 +57,5 @@ if __name__ == '__main__':
     salt = os.environ.get('SALT')
     salt_signer = SaltSigner(salt=salt)
     print("Salt of signer setted to:", salt_signer.get_salt(), flush=True)
-    print("Hosted on:", socket.gethostbyname(socket.gethostname()))
 
     app.run(host='0.0.0.0', port=5050)

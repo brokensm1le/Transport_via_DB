@@ -5,7 +5,7 @@ down_local_server: # Down local server. Usage: "make down_local_server"
 	@(cd local_server && make -s down)
 
 run_server: # Run server. Usage: "make run_server [SALT=YOUR_SALT]"
-	@(cd server && make -s build && make -s up SALT=$(SALT) && sleep 1 && make -s get_salt && make -s get_addresses)
+	@(cd server && make -s build && make -s up SALT=$(SALT) && sleep 1 && make -s get_salt)
 
 down_server: # Down server. Usage: "make down_server"
 	@(cd server && make -s down)
