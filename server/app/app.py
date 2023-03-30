@@ -33,8 +33,8 @@ def add_message():
 
         result = mongo_add_message(data, chatID)
         return {'id': result}, http.HTTPStatus.OK        
-    except:
-        return 'Bad data in request\n', http.HTTPStatus.BAD_REQUEST
+    except Exception as e:
+        return 'Bad data in request\n' + str(e), http.HTTPStatus.BAD_REQUEST
 
 @app.get('/')
 def get_messages():
@@ -50,8 +50,8 @@ def get_messages():
 
         result = mongo_get_messages(lastRecieved, chatID)
         return result, http.HTTPStatus.OK
-    except:
-        return 'Bad data in request\n', http.HTTPStatus.BAD_REQUEST
+    except Exception as e:
+        return 'Bad data in request\n' + str(e), http.HTTPStatus.BAD_REQUEST
 
 if __name__ == '__main__':    
     salt = os.environ.get('SALT')

@@ -23,18 +23,13 @@ def send():
     if request.data:
         try:
             data = json.loads(request.data.decode(encoding='utf-8'))
-            print(data, flush=True)
-            print(pub_key, flush=True)
             data['message'] = b64encode(pub_cipher.encrypt(data['message'].encode('utf-8'))).decode('utf-8')
-            print(data, flush=True)
             data["signature"] = salt_signer.generate_signature(data)
-            print(data, flush=True)
             response = requests.post(address_server, json=data)
-            print(response, flush=True)
         except Exception as e:
             print(e)
             return 'Error while processing request\n' + str(e), http.HTTPStatus.BAD_REQUEST
-        return response.json(), response.status_code
+        return response.text, response.status_code
     else:
         return 'No data in request\n', http.HTTPStatus.BAD_REQUEST
 
