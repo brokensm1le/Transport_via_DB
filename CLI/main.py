@@ -35,11 +35,18 @@ def get_messages():
                 lastRecieved = message["id"]
         mutex.release()
 
-def get_text(max_size):
+def get_text(h, w):
     global text
     mutex.acquire()
-    if len(text) > max_size:
-        text = text[-max_size:]
+    messages = text.split("\n")[::-1]
+    good = []
+    have = 0
+    for s in messages:
+        have += (len(s) + w - 1) // w
+        if have > h:
+            break
+        good.append(s)
+    text = '\n'.join(good[::-1])
     text_ = text
     mutex.release()
     return text_
@@ -75,7 +82,7 @@ def main():
             
         while True:
             stdscr.clear()
-            stdscr.addstr(0, 0, get_text(WindowOutputWidth * WindowOutputHeight))
+            stdscr.addstr(0, 0, get_text(WindowOutputHeight, WindowOutputWidth))
 
             if url is None:
                 stdscr.addstr(WindowOutputHeight, 0, "Enter local_server url: (hit ctrl-G to send)", curses.color_pair(2))
