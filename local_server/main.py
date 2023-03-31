@@ -34,6 +34,7 @@ def get():
     if request.data:
         try:
             data = request.json
+            data["signature"] = salt_signer.generate_signature(data)
             response = requests.get(address_server, json=data)
             if response.status_code != http.HTTPStatus.OK:
                 return response.text, response.status_code

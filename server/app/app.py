@@ -39,6 +39,15 @@ def get_messages():
         data = request.json
         if 'chatID' not in data:
             return 'No chatID in request\n', http.HTTPStatus.BAD_REQUEST
+        if 'signature' not in data:
+            return 'No signature in request\n', http.HTTPStatus.BAD_REQUEST
+
+        signature = data['signature']
+        del data['signature']
+
+        true_signature = salt_signer.generate_signature(data)
+        if signature != true_signature:
+            return 'Wrong signature\n', http.HTTPStatus.FORBIDDEN
         
         chatID = data['chatID']
         lastRecieved = data.get('lastRecieved')
