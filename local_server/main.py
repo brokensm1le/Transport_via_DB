@@ -1,54 +1,52 @@
-import http, requests, os, hashlib
+import http, requests, os
 from flask import Flask, request
-import json
-from Crypto.Cipher import PKCS1_OAEP
-from Crypto.PublicKey import RSA
+from utils.cipher import Cipher
+from utils.signature import SaltSigner
 
 salt = os.environ.get('SALT')
-path_pub_key = os.environ.get('PATH_PUB_KEY')
-path_prv_key = os.environ.get('PATH_PRV_KEY')
+salt_signer = SaltSigner(salt=salt)
+pub_cipher = Cipher(os.environ.get('PUB_KEY'))
+prv_cipher = Cipher(os.environ.get('PRV_KEY'))
 address_server = os.environ.get('ADDR_SERVER')
 
 app = Flask(__name__)
 
 
-@app.route("/send", methods=['POST'])
-def send() -> (http.HTTPStatus, requests.Response):
+@app.post("/send")
+def send():
     if request.data:
         try:
-            data = json.loads(request.data.decode(encoding='utf-8'))
-            print(data)
-            key = RSA.import_key(open(path_pub_key).read())
-            cipher = PKCS1_OAEP.new(key)
-            data['message'] = cipher.encrypt(data['message'])
-            data["signature"] = hashlib.sha256(salt + json.dumps(data)).hexdigest()
-
+            data = request.json
+            data['message'] = pub_cipher.encrypt(data['message'])
+            data['username'] = pub_cipher.encrypt(data['username'])
+            data["signature"] = salt_signer.generate_signature(data)
             response = requests.post(address_server, json=data)
-        except:
-            return http.HTTPStatus.BAD_REQUEST, None
-        return response.status_code, response.text
+        except Exception as e:
+            print(e)
+            return 'Error while processing request\n' + str(e), http.HTTPStatus.BAD_REQUEST
+        return response.text, response.status_code
     else:
-        return http.HTTPStatus.BAD_REQUEST, None
+        return 'No data in request\n', http.HTTPStatus.BAD_REQUEST
 
 
-@app.route("/get", methods=['GET'])
-def get() -> (http.HTTPStatus, requests.Response):
+@app.get("/get")
+def get():
     if request.data:
         try:
-            data = json.loads(request.data.decode(encoding='utf-8'))
-
+            data = request.json
             response = requests.get(address_server, json=data)
-            data_response = json.loads(response.text)
-
-            key = RSA.import_key(open(path_prv_key).read())
-            cipher = PKCS1_OAEP.new(key)
-            for i in range(len(data_response["messages"])):
-                data_response["messages"][i] = cipher.decrypt(data_response["messages"][i])
-        except:
-            return http.HTTPStatus.BAD_REQUEST, None
-        return response.status_code, data_response
+            if response.status_code != http.HTTPStatus.OK:
+                return response.text, response.status_code
+            data_response = response.json()
+            for i in range(len(data_response)):
+                data_response[i]["message"] = prv_cipher.decrypt(data_response[i]["message"])
+                data_response[i]["username"] = prv_cipher.decrypt(data_response[i]["username"])
+            return data_response, response.status_code
+        except Exception as e:
+            print(e)
+            return 'Error while processing request\n' + str(e), http.HTTPStatus.BAD_REQUEST
     else:
-        return http.HTTPStatus.BAD_REQUEST, None
+        return  'No data in request\n', http.HTTPStatus.BAD_REQUEST
 
 
 if __name__ == "__main__":

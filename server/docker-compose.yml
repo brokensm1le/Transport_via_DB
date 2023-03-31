@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+  mongo-express:
+    image: mongo-express
+    restart: always
+    env_file:
+      - .mongoExpress.env
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+    ports:
+     - 8081:8081
+  app:
+    build: 
+      context: ../
+      dockerfile: server/app/Dockerfile
+    command: python3 app.py
+    depends_on: 
+     - mongo
+    ports:
+     - 5050:5050
+    env_file:
+      - .app.env
+    container_name: server-app
