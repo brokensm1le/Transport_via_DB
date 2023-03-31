@@ -4,8 +4,8 @@ run_local_server: # Run local server. Usage: "make run_local_server SALT=YOUR_SA
 down_local_server: # Down local server. Usage: "make down_local_server"
 	@(cd local_server && make -s down)
 
-run_server: # Run server. Usage: "make run_server [SALT=YOUR_SALT]"
-	@(cd server && make -s build && make -s up SALT=$(SALT) && sleep 1 && make -s get_salt)
+run_server: # Run server. Usage: "make run_server [SALT=YOUR_SALT] [ME_USER=USER_FOR_MONGO_EXPRESS] [ME_PASSWORD=PASSWORD_FOR_MONGO_EXPRESS]". ME_USER default is "user", ME_PASSWORD default is "userAbobus".
+	@(cd server && make -s build && make -s up SALT=$(SALT) ME_USER=$(ME_USER) PASSWORD=$(ME_PASSWORD) && sleep 1 && make -s get_salt)
 
 down_server: # Down server. Usage: "make down_server"
 	@(cd server && make -s down)

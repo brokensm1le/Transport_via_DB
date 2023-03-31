@@ -1,21 +1,36 @@
 build: # Build containers with the server. Usage: "make build"
-	@touch .env
+	@touch .app.env
+	@touch .mongoExpress.env
 	@docker-compose build
 
-up: # Up containers with the server. Usage: "make up [SALT=YOUR_SALT]"
-	@rm -f .env
-	@touch .env
+up: # Up containers with the server. Usage: "make up [SALT=YOUR_SALT] [ME_USER=USER_FOR_MONGO_EXPRESS] [ME_PASSWORD=PASSWORD_FOR_MONGO_EXPRESS]". ME_USER default is "user", ME_PASSWORD default is "userIsAbobus".
+	@rm -f .app.env
+	@touch .app.env
 	@if [ $(SALT) ]; then\
-		echo SALT=$(SALT) >> .env;\
+		echo SALT=$(SALT) >> .app.env;\
 	fi
+	@rm -f .mongoExpress.env
+	@touch .mongoExpress.env
+	@if [ $(ME_USER) ]; then\
+		echo ME_CONFIG_BASICAUTH_USERNAME=$(ME_USER) >> .mongoExpress.env;\
+	else\
+		echo ME_CONFIG_BASICAUTH_USERNAME=user >> .mongoExpress.env;\
+	fi
+	@if [ $(ME_PASSWORD) ]; then\
+		echo ME_CONFIG_BASICAUTH_PASSWORD=$(ME_PASSWORD) >> .mongoExpress.env;\
+	else\
+		echo ME_CONFIG_BASICAUTH_PASSWORD=userIsAbobus >> .mongoExpress.env;\
+	fi
+
 	@docker-compose up -d
 
 stop: # Stop containers with the server. Usage: "make stop"
-	@touch .env
+	@touch .app.env
 	@docker-compose stop
 
 down: # Down containers with the server. Usage: "make down"
-	@touch .env
+	@touch .app.env
+	@touch .mongoExpress.env
 	@docker-compose down
 
 get_salt: # Get the salt setted to signer. Usage: "make get_salt"

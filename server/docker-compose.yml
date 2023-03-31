@@ -10,11 +10,9 @@ services:
   mongo-express:
     image: mongo-express
     restart: always
+    env_file:
+      - .mongoExpress.env
     environment:
-      ME_CONFIG_BASICAUTH_USERNAME: user
-      ME_CONFIG_BASICAUTH_PASSWORD: userIsAbobus
-      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: adminIsAbobusToo
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
     ports:
      - 8081:8081
@@ -28,5 +26,5 @@ services:
     ports:
      - 5050:5050
     env_file:
-      - .env
+      - .app.env
     container_name: server-app
