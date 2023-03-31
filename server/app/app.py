@@ -1,9 +1,6 @@
 from flask import Flask, request
 import http
-import json
-import argparse
 import os
-import socket
 
 from mongo_worker import mongo_get_messages, mongo_add_message
 from utils.signature import SaltSigner
@@ -15,7 +12,7 @@ app = Flask(__name__)
 @app.post('/')
 def add_message():
     try:
-        data = json.loads(request.data.decode('utf-8'))
+        data = request.json
         if 'signature' not in data:
             return 'No signature in request\n', http.HTTPStatus.BAD_REQUEST
         if 'chatID' not in data:
@@ -39,7 +36,7 @@ def add_message():
 @app.get('/')
 def get_messages():
     try:
-        data = json.loads(request.data.decode('utf-8'))
+        data = request.json
         if 'chatID' not in data:
             return 'No chatID in request\n', http.HTTPStatus.BAD_REQUEST
         

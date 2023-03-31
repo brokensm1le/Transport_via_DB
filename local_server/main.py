@@ -1,18 +1,12 @@
 import http, requests, os
 from flask import Flask, request
-import json
-from Crypto.Cipher import PKCS1_OAEP
-from Crypto.PublicKey import RSA
+from utils.cipher import Cipher
 from utils.signature import SaltSigner
-from base64 import b64decode, b64encode
 
 salt = os.environ.get('SALT')
 salt_signer = SaltSigner(salt=salt)
-print(salt, flush=True)
-pub_key = RSA.import_key(b64decode(os.environ.get('PATH_PUB_KEY').encode('utf-8')))
-pub_cipher = PKCS1_OAEP.new(pub_key)
-prv_key = RSA.import_key(b64decode(os.environ.get('PATH_PRV_KEY').encode('utf-8')))
-prv_cipher = PKCS1_OAEP.new(prv_key)
+pub_cipher = Cipher(os.environ.get('PUB_KEY'))
+prv_cipher = Cipher(os.environ.get('PRV_KEY'))
 address_server = os.environ.get('ADDR_SERVER')
 
 app = Flask(__name__)
@@ -20,14 +14,11 @@ app = Flask(__name__)
 
 @app.post("/send")
 def send():
-    print(request.data, flush=True)
     if request.data:
         try:
-            data = json.loads(request.data.decode(encoding='utf-8'))
-            data['message'] = b64encode(pub_cipher.encrypt(data['message'].encode('utf-8'))).decode('utf-8')
-            print(data, flush=True)
+            data = request.json
+            data['message'] = pub_cipher.encrypt(data['message'])
             data["signature"] = salt_signer.generate_signature(data)
-            print(data, flush=True)
             response = requests.post(address_server, json=data)
         except Exception as e:
             print(e)
@@ -41,17 +32,17 @@ def send():
 def get():
     if request.data:
         try:
-            data = json.loads(request.data.decode(encoding='utf-8'))
-
+            data = request.json
             response = requests.get(address_server, json=data)
-            data_response = json.loads(response.text)
-
-            for i in range(len(data_response["messages"])):
-                data_response["messages"][i]["message"] = prv_cipher.decrypt(b64decode(data_response["messages"][i]["message"].encode('utf-8'))).decode('utf-8')
+            if response.status_code != http.HTTPStatus.OK:
+                return response.text, response.status_code
+            data_response = response.json()
+            for i in range(len(data_response)):
+                data_response[i]["message"] = prv_cipher.decrypt(data_response[i]["message"])
+            return data_response, response.status_code
         except Exception as e:
             print(e)
             return 'Error while processing request\n' + str(e), http.HTTPStatus.BAD_REQUEST
-        return data_response, response.status_code
     else:
         return  'No data in request\n', http.HTTPStatus.BAD_REQUEST
 

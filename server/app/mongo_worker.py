@@ -1,13 +1,12 @@
 from pymongo import MongoClient
+from bson import ObjectId
 
 client = None
 
 def get_database(db_name='test'):
     global client
     if client is None:
-        print("start login", flush=True)
         client = MongoClient("mongodb://root:example@mongo:27017")
-        print("end login", flush=True)
     return client[db_name]
 
 def get_collection(collection_name, db_name='test'):
@@ -24,5 +23,8 @@ def mongo_get_messages(lastRecieved, collection_name, db_name='test'):
     filter = {}
     if lastRecieved is not None:
         filter["_id"] = {"$gt": ObjectId(lastRecieved)}
-    result = list(collection.find(filter, {"_id": False}))
+    result = list(collection.find(filter))
+    for i in range(len(result)):
+        result[i]["id"] = str(result[i]["_id"])
+        del result[i]["_id"]
     return result
