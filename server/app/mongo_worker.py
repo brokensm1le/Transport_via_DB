@@ -21,5 +21,8 @@ def mongo_add_message(message, collection_name, db_name='test'):
 
 def mongo_get_messages(lastRecieved, collection_name, db_name='test'):
     collection = get_collection(collection_name, db_name)
-    result = list(collection.find({"_id": {"$gt": ObjectId(lastRecieved)}}, {"_id": False}))
+    filter = {}
+    if lastRecieved is not None:
+        filter["_id"] = {"$gt": ObjectId(lastRecieved)}
+    result = list(collection.find(filter, {"_id": False}))
     return result

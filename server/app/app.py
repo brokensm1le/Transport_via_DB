@@ -42,11 +42,9 @@ def get_messages():
         data = json.loads(request.data.decode('utf-8'))
         if 'chatID' not in data:
             return 'No chatID in request\n', http.HTTPStatus.BAD_REQUEST
-        if 'lastRecieved' not in data:
-            return 'No lastRecieved in request\n', http.HTTPStatus.BAD_REQUEST
         
         chatID = data['chatID']
-        lastRecieved = data['lastRecieved']
+        lastRecieved = data.get('lastRecieved')
 
         result = mongo_get_messages(lastRecieved, chatID)
         return result, http.HTTPStatus.OK
