@@ -1,4 +1,6 @@
-server/.env
-local_server/.env
+server/.app.env
+server/.mongoExpress.env
 server/__pycache__
+local_server/.env
+local_server/__pycache__
 utils/__pycache__

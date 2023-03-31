@@ -18,6 +18,7 @@ def send():
         try:
             data = request.json
             data['message'] = pub_cipher.encrypt(data['message'])
+            data['username'] = pub_cipher.encrypt(data['username'])
             data["signature"] = salt_signer.generate_signature(data)
             response = requests.post(address_server, json=data)
         except Exception as e:
@@ -39,6 +40,7 @@ def get():
             data_response = response.json()
             for i in range(len(data_response)):
                 data_response[i]["message"] = prv_cipher.decrypt(data_response[i]["message"])
+                data_response[i]["username"] = prv_cipher.decrypt(data_response[i]["username"])
             return data_response, response.status_code
         except Exception as e:
             print(e)

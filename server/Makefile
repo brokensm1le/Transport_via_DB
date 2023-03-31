@@ -26,6 +26,7 @@ up: # Up containers with the server. Usage: "make up [SALT=YOUR_SALT] [ME_USER=U
 
 stop: # Stop containers with the server. Usage: "make stop"
 	@touch .app.env
+	@touch .mongoExpress.env
 	@docker-compose stop
 
 down: # Down containers with the server. Usage: "make down"
