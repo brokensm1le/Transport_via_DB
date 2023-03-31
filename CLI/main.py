@@ -100,14 +100,14 @@ def main():
             
             box = Textbox(winput)
             box.edit()
-            message = box.gather().strip()
+            message = box.gather().rstrip()
 
             if url is None:
-                url = message
+                url = message.lstrip()
             elif chatID is None:
-                chatID = message
+                chatID = message.lstrip()
             elif username is None:
-                username = message
+                username = message.lstrip()
             else:
                 send_message(message)
     except Exception as e:
