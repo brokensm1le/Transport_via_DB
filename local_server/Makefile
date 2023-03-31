@@ -1,3 +1,4 @@
+#!/bin/bash
 build: # Build containers with the local server. Usage: "make build"
 	@touch .env
 	@docker-compose build
@@ -13,7 +14,7 @@ up: # Up containers with the local server. Usage: "make up SALT=YOUR_SALT PATH_P
 	fi
 	@if [ $(PATH_PUB_KEY) ]; then\
 		if test -f "$(PATH_PUB_KEY)"; then\
-			echo -n PUB_KEY= >> .env;\
+			printf PUB_KEY= >> .env;\
 			cat $(PATH_PUB_KEY) | base64 | awk '{ printf("%s", $$0) }' >> .env;\
 			echo >> .env;\
 		else\
@@ -26,7 +27,7 @@ up: # Up containers with the local server. Usage: "make up SALT=YOUR_SALT PATH_P
 	fi
 	@if [ $(PATH_PRV_KEY) ]; then\
 		if test -f "$(PATH_PRV_KEY)"; then\
-			echo -n PRV_KEY= >> .env;\
+			printf PRV_KEY= >> .env;\
 			cat $(PATH_PRV_KEY) | base64 | awk '{ printf("%s", $$0) }' >> .env;\
 			echo >> .env;\
 		else\

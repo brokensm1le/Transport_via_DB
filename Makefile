@@ -1,3 +1,4 @@
+#!/bin/bash
 run_local_server: # Run local server. Usage: "make run_local_server SALT=YOUR_SALT PATH_PUB_KEY=YOUR_PATH_PUB_KEY PATH_PRV_KEY=YOUR_PATH_PRV_KEY ADDR_SERVER=YOUR_ADDR_SERVER"
 	@(cd local_server && make -s build && make -s up SALT=$(SALT) PATH_PUB_KEY=$(realpath $(PATH_PUB_KEY)) PATH_PRV_KEY=$(realpath $(PATH_PRV_KEY)) ADDR_SERVER=$(ADDR_SERVER))
 

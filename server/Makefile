@@ -1,3 +1,4 @@
+#!/bin/bash
 build: # Build containers with the server. Usage: "make build"
 	@touch .app.env
 	@touch .mongoExpress.env
